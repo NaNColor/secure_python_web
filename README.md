@@ -97,5 +97,33 @@ if current_user.id != current_id:
 
 #### path traversal - имплементировано в файле resources_path.py
 
+Здесь можно избежать этой уязвимости путем контроля ввода нелегетимных комбинаций символов по типу "../". Для этого я использовал следующую конструкцию в коде:
+```
+while "../" in filename or "/" in filename:
+        filename = filename.replace("../","")
+        filename = filename.replace("/","")
+    payload = ""
+    try:
+        payload = open(filename, "r").read()
+    except:
+        flash(f'Somthing went wrong...')
+```
+
+Так как можно попробовать обойти одинарную замену символов, я решил сделать это циклически, чтобы избежать попытки перехитрить удаление "../". Я считаю, в данном случае этот код реализует защиту от path traversal. Лучший способ защиты в данном случае - проверять, соответсвует ли введенная строка файлам, которые могут быть отображены.
 
 #### brute force - имплементировано в файле resources_bruteforce.py
+
+Защита от брутфорса может быть различной: от обязательного ввода капчи, до блокирования адресов на основе конфигураций fail2ban.
+
+Я решил добавить в свое приложение капчу. Для этого добавил в файл `webapp.py` строки конфигурации:
+
+```
+from flask_session_captcha import FlaskSessionCaptcha
+app.config['CAPTCHA_ENABLE'] = True
+app.config['CAPTCHA_LENGTH'] = 5
+app.config['CAPTCHA_WIDTH'] = 160
+app.config['CAPTCHA_HEIGHT'] = 60
+captcha = FlaskSessionCaptcha(app)
+```
+
+
