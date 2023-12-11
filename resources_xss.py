@@ -2,10 +2,19 @@ from flask import render_template, make_response, redirect, Flask, request, flas
 from webapp import app
 from models import CommentsModel
 
+def escape_XSS(string):
+    string = string.replace('&','&amp')
+    string = string.replace('<','&lt')
+    string = string.replace('>','&gt')
+    string = string.replace('"','&quot')
+    string = string.replace('\'','&#x27')
+    return string
+
 @app.route('/xss', methods = ['POST', 'GET'])
 def index_xss():
     if request.method == 'POST':
         text=request.form['text']
+        text=escape_XSS(text)
         if not text:
             flash(f'Error: Can\'t sent these comment {text}')
         else:
