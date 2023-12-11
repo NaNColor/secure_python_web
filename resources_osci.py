@@ -8,5 +8,9 @@ def index_osci():
     command = 'cat ' + request.args.get("filename")
     payload = ""
     if command:
-        payload = subprocess.check_output(command, shell=True).decode("utf-8")
+        try:
+            payload = subprocess.check_output(['cat', request.args.get("filename")], shell=False).decode("utf-8")
+        except:
+            flash(f'Do not change the URL!!!')
+            payload = "Pleace, return to the main page and whisit this page again."
     return make_response(render_template('osci.html',payload = payload))
