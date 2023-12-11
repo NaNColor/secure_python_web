@@ -11,11 +11,18 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = '8e977ef74bf745ac153c117a2c9e76c6'
 
-
+from flask_simple_captcha import CAPTCHA
+YOUR_CONFIG = {
+    'SECRET_CAPTCHA_KEY': '9e977ef74bf744ac153c118a2c9e76c9',
+    'CAPTCHA_LENGTH': 6,
+    'CAPTCHA_DIGITS': False,
+    'EXPIRE_SECONDS': 600,
+}
+SIMPLE_CAPTCHA = CAPTCHA(config=YOUR_CONFIG)
+app = SIMPLE_CAPTCHA.init_app(app)
 
 
 db = SQLAlchemy(app)
-
 
 
 

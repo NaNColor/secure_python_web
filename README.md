@@ -118,12 +118,26 @@ while "../" in filename or "/" in filename:
 Я решил добавить в свое приложение капчу. Для этого добавил в файл `webapp.py` строки конфигурации:
 
 ```
-from flask_session_captcha import FlaskSessionCaptcha
-app.config['CAPTCHA_ENABLE'] = True
-app.config['CAPTCHA_LENGTH'] = 5
-app.config['CAPTCHA_WIDTH'] = 160
-app.config['CAPTCHA_HEIGHT'] = 60
-captcha = FlaskSessionCaptcha(app)
+from flask_simple_captcha import CAPTCHA
+YOUR_CONFIG = {
+    'SECRET_CAPTCHA_KEY': '9e977ef74bf744ac153c118a2c9e76c9',
+    'CAPTCHA_LENGTH': 6,
+    'CAPTCHA_DIGITS': False,
+    'EXPIRE_SECONDS': 600,
+}
+SIMPLE_CAPTCHA = CAPTCHA(config=YOUR_CONFIG)
+app = SIMPLE_CAPTCHA.init_app(app)
+```
+А также добавил код в файл работы с запросами.
+```
+new_captcha_dict = SIMPLE_CAPTCHA.create()
+c_hash = request.form.get('captcha-hash')
+c_text = request.form.get('captcha-text')
+if not SIMPLE_CAPTCHA.verify(c_text, c_hash):
+    flash(f'Error: Wrong captcha')
+    return make_response(render_template('bruteforce.html',captcha=new_captcha_dict),200 )
 ```
 
+Теперь чтобы войти пользователь должен ввести капчу, которая обновляется каждый раз, когда страница загружается.
+Таким образом брутфорс атака с этой стороны сайта становится не рентабильной.
 

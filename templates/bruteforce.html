@@ -28,6 +28,9 @@
           required
         />
         <div >
+        <p>
+          {{ captcha_html(captcha)|safe }}
+    <!-- <input type="submit"> -->
   </div>
         <button type="submit" name="btn" value="pressed" >Login</button>
         <!-- <input type="submit" value="TEST"> -->
